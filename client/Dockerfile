@@ -1,11 +1,11 @@
 FROM node:10-alpine
 
-RUN mkdir -p /app
-WORKDIR /app
+RUN mkdir -p /home/node
+WORKDIR /home/node
 
-COPY package.json /app
-COPY yarn.lock /app
-COPY . /app
+COPY package.json /home/node
+COPY yarn.lock /home/node
+COPY . /home/node
 
 RUN yarn install
 
