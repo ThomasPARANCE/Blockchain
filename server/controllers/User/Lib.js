@@ -42,7 +42,7 @@ async function saveKeys(req, res) {
         console.log("Launch  saveKeys");
         service.saveUserKeys(public_key, private_key, id_user, function(result) {
             console.log("in saveKeys " + result);
-            if (result != null && result != false) {
+            if (result != null) {
                 console.log("Stored");
                 return res.status(200).json({
                     id_user: id_user,
@@ -53,6 +53,134 @@ async function saveKeys(req, res) {
             return res.status(500).send("Error");
         });
     }
+}
+
+async function addTransaction(req, res) {
+    console.log("addTransaction1");
+    const { amount, fee, key_from, key_to, private_key } = req.body;
+    console.log(amount);
+    console.log(fee);
+    console.log(key_from);
+    console.log(key_to);
+    console.log(private_key);
+    if (!amount || !fee || !key_from || !key_to || !private_key) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  addTransaction");
+        service.addUserTransaction(amount, fee, key_from, key_to, private_key, function(result) {
+            console.log("in addTransaction " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                console.log(result.id);
+                return res.status(200).json({
+                    text: "Stockage réussi",
+                    id: result.id
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
+async function publicTransactionNetwkork(req, res) {
+    console.log("publicTransactionNetwkork1");
+    const { idTransaction } = req.body;
+    console.log(idTransaction);
+    if (!idTransaction) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  publicTransactionNetwkork1");
+        service.publicUserTransactionNetwkork(idTransaction, function(result) {
+            console.log("in publicTransactionNetwkork1 " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    text: "Stockage réussi",
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
+async function joinNetwork(req, res) {
+    console.log("joinNetwork1");
+    const { id_user } = req.body;
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  joinNetwork");
+        service.joinUserNetwork(id_user, function(result) {
+            console.log("in joinNetwork " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
+async function getTabNetwork(req, res) {
+    console.log("getTabNetwork1");
+    console.log("Launch  getTabNetwork");
+    service.getUserTabNetwork( function(result) {
+        console.log("in getTabNetwork " + result);
+        if (result != null && result != false) {
+            console.log("Stored");
+            return res.status(200).json({
+                results: result,
+                text: "Stockage réussi"
+            });
+        }
+        console.log("not stored" + result);
+        return res.status(500).send("Error");
+    });
+}
+
+async function getAllTransactionNetwork(req, res) {
+    console.log("getAllTransactionNetwork1");
+    console.log("Launch  getAllTransactionNetwork");
+    service.getUserAllTransactionNetwork( function(result) {
+        console.log("in getAllTransactionNetwork " + result);
+        if (result != null && result != false) {
+            console.log("Stored");
+            return res.status(200).json({
+                results: result,
+                text: "Stockage réussi"
+            });
+        }
+        console.log("not stored" + result);
+        return res.status(500).send("Error");
+    });
+}
+
+async function getAllTransactionMempool(req, res) {
+    console.log("getAllTransactionMempool1");
+    console.log("Launch  getAllTransactionMempool");
+    service.getUserAllTransactionMempool( function(result) {
+        console.log("in getAllTransactionMempool " + result);
+        if (result != null && result != false) {
+            console.log("Stored");
+            return res.status(200).json({
+                results: result,
+                text: "Stockage réussi"
+            });
+        }
+        console.log("not stored" + result);
+        return res.status(500).send("Error");
+    });
 }
 
 async function addEconomy(req, res) {
@@ -69,9 +197,10 @@ async function addEconomy(req, res) {
         console.log("Launch  addEconomy");
         service.addUserEconomy(public_key, good, price, function(result) {
             console.log("in addEconomy " + result);
-            if (result != null && result != false) {
+            if (result != null) {
                 console.log("Stored");
                 return res.status(200).json({
+                    results: result,
                     text: "Stockage réussi"
                 });
             }
@@ -100,5 +229,11 @@ async function getAllEconomy(req, res) {
 
 exports.login = login;
 exports.saveKeys = saveKeys;
+exports.addTransaction = addTransaction;
+exports.publicTransactionNetwkork = publicTransactionNetwkork;
+exports.joinNetwork = joinNetwork;
+exports.getTabNetwork = getTabNetwork;
+exports.getAllTransactionNetwork = getAllTransactionNetwork;
+exports.getAllTransactionMempool = getAllTransactionMempool;
 exports.addEconomy = addEconomy;
 exports.getAllEconomy = getAllEconomy;

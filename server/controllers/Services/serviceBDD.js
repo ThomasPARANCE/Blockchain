@@ -34,6 +34,84 @@ ServiceBDD.prototype = {
           });
     },
 
+    addUserTransaction : function(amount, fee, key_from, key_to, private_key, callback)
+    {
+        console.log("addUserTransaction");
+        pool.query(`insert into transaction (amount, fee, public_key_from, public_key_to, private_key) values (${amount}, ${fee}, '${key_from}', '${key_to}', '${private_key}')`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                pool.query(`select * from transaction order by id desc LIMIT 1`, (err, results) => {
+                    if (err) {
+                        callback(false);
+                    } else {
+                        callback(results[0]);
+                    }
+                });
+            }
+          });
+    },
+
+    publicUserTransactionNetwkork : function(id, callback)
+    {
+        console.log("publicUserTransactionNetwkork");
+        pool.query(`UPDATE transaction set signature = 'signature', is_network=true where id=${id}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(true);
+            }
+          });
+    },
+
+    joinUserNetwork : function(id_user, callback)
+    {
+        console.log("joinUserNetwork");
+        pool.query(`UPDATE keyUser set is_network=true, date_join_network=CURRENT_TIMESTAMP where id_user=${id_user}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(true);
+            }
+          });
+    },
+
+    getUserTabNetwork : function(callback)
+    {
+        console.log("getUserTabNetwork");
+        pool.query(`select id_user, (SELECT COUNT(*) from block inner join blockchain on block.id_blockchain = blockchain.id inner join users on blockchain.id = users.id_blockchain where users.id = keyUser.id_user) as length_blockchain from keyUser where is_network=true order by date_join_network`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+    },
+
+    getUserAllTransactionNetwork : function(callback)
+    {
+        console.log("getUserTabNetwork");
+        pool.query(`select * from transaction where is_network=true`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+    },
+
+    getUserAllTransactionMempool : function(callback)
+    {
+        console.log("getUserTabNetwork");
+        pool.query(`select * from transaction where is_mempool=true`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+    },
+
     addUserEconomy : function(public_key, good, price, callback)
     {
         console.log("saveUserKeys");

@@ -1,18 +1,64 @@
 import React, { Component } from "react";
+import API from "../../utils/API";
 
 class NodeNetwork extends Component {
   constructor() {
     super();
     this.state = {
-      name: "React"
+      name: "React",
+      listNetwork: [],
+      key: 0
     };
+    this.getTabNetwork();
+  }
+
+  joinNetwork = () => {
+     API.joinNetwork(localStorage.getItem("id_user"));
+  }
+
+  getTabNetwork = async () => {
+     const {data} = await API.getTabNetwork();
+     console.log(data);
+     var temp = [];
+     var i = 0;
+     for (var item in data.results) {
+        console.log(data.results[item].id_user);
+        console.log(data.results[item].id_user);
+        if (data.results[item].id_user === Number(localStorage.getItem("id_user")))
+        {
+         temp.push(
+            <tr className="bg-success" key={i}>
+                 <th className="nodeCounter" scope="row">NODE NR
+                    {i}
+                 </th>
+                 <td data-userid="201">{data.results[item].length_blockchain}
+                       Blocks
+                 </td>
+                 <td className="d-none userId">{data.results[item].id_user}</td>
+              </tr>);
+        } else {
+         temp.push(
+            <tr className="" key={i}>
+                 <th className="nodeCounter" scope="row">NODE NR
+                    {i}
+                 </th>
+                 <td data-userid="201">{data.results[item].length_blockchain}
+                       Blocks
+                 </td>
+                 <td className="d-none userId">{data.results[item].id_user}</td>
+              </tr>);
+        }
+         i++;
+     }
+     this.setState({listNetwork: temp});
+     this.setState({key: i});
   }
 
   render() {
     return (
-        <div class="containerBlockChain">
+        <div className="containerBlockChain">
         <div className="text-center">
-           <form className="button_to" method="post" action="https://blockchain-simulator.herokuapp.com/nodes/create" data-remote="true"><input className="btn btn-blue" id="joinNetwork" type="submit" value="JOIN THE NETWORK"/><input type="hidden" name="authenticity_token" value="PS2yxPQoB4FdYxiUmoBF7qTKo1FRZPFe3qI3/a5xCUzYgfWWkYGM7XPJEc1A84VagDYDpZIBDUVEPVNMOBtN0A=="/></form>
+           <form className="button_to" data-remote="true"><input className="btn btn-blue" id="joinNetwork" value="JOIN THE NETWORK" onClick={this.joinNetwork} readOnly="readonly"/><input type="hidden" name="authenticity_token" value="PS2yxPQoB4FdYxiUmoBF7qTKo1FRZPFe3qI3/a5xCUzYgfWWkYGM7XPJEc1A84VagDYDpZIBDUVEPVNMOBtN0A==" readOnly="readonly"/></form>
         </div>
         <table id="nodesTable" className="table table-hover table-bordered text-tab">
            <thead>
@@ -23,51 +69,7 @@ class NodeNetwork extends Component {
               </tr>
            </thead>
            <tbody>
-              <tr className="">
-                 <th className="nodeCounter" scope="row">NODE NR
-                    1
-                 </th>
-                 <td data-userid="201">0
-                    Blocks
-                 </td>
-                 <td className="d-none userId">201</td>
-              </tr>
-              <tr className="">
-                 <th className="nodeCounter" scope="row">NODE NR
-                    2
-                 </th>
-                 <td data-userid="212">0
-                    Blocks
-                 </td>
-                 <td className="d-none userId">212</td>
-              </tr>
-              <tr className="">
-                 <th className="nodeCounter" scope="row">NODE NR
-                    3
-                 </th>
-                 <td data-userid="222">0
-                    Blocks
-                 </td>
-                 <td className="d-none userId">222</td>
-              </tr>
-              <tr className="">
-                 <th className="nodeCounter" scope="row">NODE NR
-                    4
-                 </th>
-                 <td data-userid="202">0
-                    Blocks
-                 </td>
-                 <td className="d-none userId">202</td>
-              </tr>
-              <tr className="">
-                 <th className="nodeCounter" scope="row">NODE NR
-                    5
-                 </th>
-                 <td data-userid="224">0
-                    Blocks
-                 </td>
-                 <td className="d-none userId">224</td>
-              </tr>
+              {this.state.listNetwork}
            </tbody>
         </table>
         <div className="text-center">

@@ -19,6 +19,29 @@ export default {
         return axios.post(`${burl}/user/saveKeys`, {public_key, private_key, id_user}, { headers: headers });
     },
 
+    addTransaction: function(amount, fee, key_from, key_to, private_key) {
+        return axios.post(`${burl}/user/addTransaction`, {amount, fee, key_from, key_to, private_key}, { headers: headers });
+    },
+
+    publicTransactionNetwkork: function(idTransaction) {
+        return axios.post(`${burl}/user/publicTransactionNetwkork`, {idTransaction}, { headers: headers });
+    },
+
+    joinNetwork: function(id_user) {
+        return axios.post(`${burl}/user/joinNetwork`, {id_user}, { headers: headers });
+    },
+
+    getTabNetwork: function() {
+        return axios.post(`${burl}/user/getTabNetwork`, { headers: headers });
+    },
+
+    getAllTransactionNetwork: function() {
+        return axios.post(`${burl}/user/getAllTransactionNetwork`, { headers: headers });
+    },
+
+    getAllTransactionMempool: function() {
+        return axios.post(`${burl}/user/getAllTransactionMempool`, { headers: headers });
+    },
 
     addEconomy: function(public_key, good, price) {
         return axios.post(`${burl}/user/addEconomy`, {public_key, good, price}, { headers: headers });

@@ -32,11 +32,6 @@ export class Dashboard extends React.Component {
 		window.location = "/";
 	}
 
-	saveKeys = () => {
-		API.saveKeys("test", "test", localStorage.getItem("id_user"));
-	}
-
-
    hideComponent(name) {
       console.log(name);
       switch (name) {

@@ -10,7 +10,7 @@ class NodeBlockChain extends Component {
 
   render() {
     return (
-      <div class="containerBlockChain">
+      <div className="containerBlockChain">
       <h6>NEW BLOCK(S) TO VERIFY BEFORE INSERTION IN MY BLOCKCHAIN</h6>
       <div id="blockToVerify">
          <div id="noBlock">There are no blocks to verify!</div>

@@ -10,7 +10,7 @@ class Miner extends Component {
 
   render() {
     return (
-        <div id="tabPaneContentBlockMining" class="containerBlockChain">
+        <div id="tabPaneContentBlockMining" className="containerBlockChain">
             Join the network, before mining!
         </div>
     );

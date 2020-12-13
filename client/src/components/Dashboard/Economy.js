@@ -9,16 +9,12 @@ class Economy extends Component {
         valuePublicKey: '',
         valueService: '',
         valuePrice: '',
-        listEconomy: []
+        listEconomy: [],
+        key: 0
     };
 
-    this.handleChange = this.handleChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.getAllEconomy();
-  }
-
-  handleChange(event) {
-    this.setState({valuePublicKey: event.target.value});
   }
 
   handleInputChange(event) {
@@ -35,7 +31,9 @@ class Economy extends Component {
         event.preventDefault();
         API.addEconomy(this.state.valuePublicKey, this.state.valueService, this.state.valuePrice);
         var temp = this.state.listEconomy;
-        temp.push(<tr>
+        var i = this.state.key;
+        i = i + 1;
+        temp.push(<tr key={i}>
             <td className="productCounter fixedCellSmaller">
             {this.state.valuePublicKey}
             </td>
@@ -47,6 +45,7 @@ class Economy extends Component {
             </td>
         </tr>)
         this.setState({listEconomy: temp});
+        this.setState({key: i});
         event.preventDefault();
     }
 
@@ -74,17 +73,18 @@ class Economy extends Component {
             i++;
         }
         this.setState({listEconomy: temp});
+        this.setState({key: i});
    }
 
   render() {
     return (
-        <div id="tabPaneContentEconomy" class="containerBlockChain">
+        <div id="tabPaneContentEconomy" className="containerBlockChain">
             <form className="form-inline mt-4" id="goodForm" ref="form" onSubmit={this.handleSubmit}>
                 <input name="utf8" type="hidden" value="✓"/>
                 <div className="form-row">
                     <div className="col">
-                    <input type="text" name="public_key" id="public_key" className="form-control" placeholder="Public Key" required="required" maxLength="150" value={this.state.valuePublicKey}
-            onChange={this.handleChange}/>
+                    <input type="text" name="valuePublicKey" id="public_key" className="form-control" placeholder="Public Key" required="required" maxLength="150" value={this.state.valuePublicKey}
+            onChange={this.handleInputChange}/>
                     </div>
                     <div className="col">
                     <input type="text" name="valueService" id="name" className="form-control" placeholder="Good/ Service" required="required" maxLength="50" value={this.state.valueService}
