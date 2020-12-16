@@ -75,7 +75,7 @@ class WalletTransaction extends Component {
                         <label htmlFor="private_key">Private Key</label>
                         <input type="text" name="valuePrivate" id="private_key" className="form-control" required="required" value={this.state.valuePrivate} onChange={this.handleInputChange}/>
                      </div>
-                     <input name="commit" value="Sign" id="signTransaction" className="btn btn-blue btn-block" data-disable-with="Sign" onClick={this.addTransaction}/>
+                     <input name="commit" value="Sign" id="signTransaction" className="btn btn-blue btn-block" data-disable-with="Sign" onClick={this.addTransaction} readOnly="readonly"/>
                   </form>
                   <div className="form-group">
                      <label htmlFor="signature">Message Signature</label>

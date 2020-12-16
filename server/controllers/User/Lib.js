@@ -55,6 +55,30 @@ async function saveKeys(req, res) {
     }
 }
 
+async function getKeys(req, res) {
+    console.log("getKeys1");
+    const { id_user } = req.body;
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  getKeys");
+        service.getUserKeys(id_user, function(result) {
+            console.log("in getKeys " + result);
+            if (result != null) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
 async function addTransaction(req, res) {
     console.log("addTransaction1");
     const { amount, fee, key_from, key_to, private_key } = req.body;
@@ -166,6 +190,30 @@ async function getAllTransactionNetwork(req, res) {
     });
 }
 
+async function sendMempool(req, res) {
+    console.log("sendMempool1");
+    const { id } = req.body;
+    console.log(id);
+    if (!id) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  sendMempool");
+        service.sendUserMempool(id, function(result) {
+            console.log("in sendMempool " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
 async function getAllTransactionMempool(req, res) {
     console.log("getAllTransactionMempool1");
     console.log("Launch  getAllTransactionMempool");
@@ -197,7 +245,7 @@ async function addEconomy(req, res) {
         console.log("Launch  addEconomy");
         service.addUserEconomy(public_key, good, price, function(result) {
             console.log("in addEconomy " + result);
-            if (result != null) {
+            if (result != null && result != false) {
                 console.log("Stored");
                 return res.status(200).json({
                     results: result,
@@ -229,11 +277,13 @@ async function getAllEconomy(req, res) {
 
 exports.login = login;
 exports.saveKeys = saveKeys;
+exports.getKeys = getKeys;
 exports.addTransaction = addTransaction;
 exports.publicTransactionNetwkork = publicTransactionNetwkork;
 exports.joinNetwork = joinNetwork;
 exports.getTabNetwork = getTabNetwork;
 exports.getAllTransactionNetwork = getAllTransactionNetwork;
+exports.sendMempool = sendMempool;
 exports.getAllTransactionMempool = getAllTransactionMempool;
 exports.addEconomy = addEconomy;
 exports.getAllEconomy = getAllEconomy;

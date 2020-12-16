@@ -25,11 +25,37 @@ ServiceBDD.prototype = {
         console.log(public_key);
         console.log(private_key);
         console.log(id_user);
-        pool.query(`insert into keyUser (public_key, private_key, id_user) values ('${public_key}', '${private_key}', ${id_user})`, (err, results) => {
+        console.log("select save");
+        pool.query(`select * from keyUser where id_user = ${id_user}`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
-                callback(true);
+                callback(results);
+                console.log(results);
+                console.log(results.length);
+                if (results.length == 0) {
+                    console.log("insert save");
+                    pool.query(`insert into keyUser (public_key, private_key, id_user) values ('${public_key}', '${private_key}', ${id_user})`, (err, results) => {
+                        if (err) {
+                            callback(false);
+                        } else {
+                            callback(true);
+                        }
+                    });
+                }
+            }
+          });
+    },
+
+    getUserKeys : function(id_user, callback)
+    {
+        console.log("getUserKeys");
+        console.log(id_user);
+        pool.query(`select * from keyUser where id_user = ${id_user} LIMIT 1`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
             }
           });
     },
@@ -96,6 +122,19 @@ ServiceBDD.prototype = {
                 callback(false);
             } else {
                 callback(results);
+            }
+          });
+    },
+
+    sendUserMempool : function(id, callback)
+    {
+        console.log("sendUserMempool");
+        console.log(id);
+        pool.query(`update transaction set is_mempool=true, is_network=false where id=${id}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(true);
             }
           });
     },

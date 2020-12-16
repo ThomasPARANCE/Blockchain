@@ -19,6 +19,10 @@ export default {
         return axios.post(`${burl}/user/saveKeys`, {public_key, private_key, id_user}, { headers: headers });
     },
 
+    getKeys: function(id_user) {
+        return axios.post(`${burl}/user/getKeys`, {id_user}, { headers: headers });
+    },
+
     addTransaction: function(amount, fee, key_from, key_to, private_key) {
         return axios.post(`${burl}/user/addTransaction`, {amount, fee, key_from, key_to, private_key}, { headers: headers });
     },
@@ -37,6 +41,10 @@ export default {
 
     getAllTransactionNetwork: function() {
         return axios.post(`${burl}/user/getAllTransactionNetwork`, { headers: headers });
+    },
+
+    sendMempool: function(id) {
+        return axios.post(`${burl}/user/sendMempool`, {id}, { headers: headers });
     },
 
     getAllTransactionMempool: function() {

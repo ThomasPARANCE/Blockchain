@@ -12,30 +12,42 @@ class NodeMempool extends Component {
     this.getAllTransactionMempool();
   }
 
-  insertBlock = () => {
+  insertBlock = (event) => {
      console.log("insertBlock");
+   //   API.insertBlock(id);
   }
 
   getAllTransactionMempool = async () => {
-   const {data} = await API.getAllTransactionNetwork();
-   console.log("getAllTransactionNetwork");
+   const {data} = await API.getAllTransactionMempool();
+   console.log("getAllTransactionMempool");
    var temp = [];
    var i = 1;
-   for (var item in data.results) {
-       temp.push(
+   if (data.results.length > 0) {
+      for (var item in data.results) {
+         temp.push(
 
-         <tr key={i}>
-    <th class="mempoolTransactionCounter" scope="row">{i}</th>
-    <td>{data.results[item].amount}</td>
-    <td>{data.results[item].fee}</td>
-    <td class="fixedCellSmaller">{data.results[item].public_key_from}</td>
-    <td class="fixedCellSmaller">{data.results[item].public_key_to}</td>
-    <td class="fixedCellSmaller">{data.results[item].private_key}</td>
-    <td>
-      <button class="btn btn-blue" data-remote="true" rel="nofollow" onClick={this.insertBlock}>INSERT TRANSACTION INTO NEW BLOCK TO BE MINED</button>
-    </td>
-  </tr>);
-       i++;
+            <tr key={i}>
+      <th className="mempoolTransactionCounter" scope="row">{i}</th>
+      <td>{data.results[item].amount}</td>
+      <td>{data.results[item].fee}</td>
+      <td className="fixedCellSmaller">{data.results[item].public_key_from}</td>
+      <td className="fixedCellSmaller">{data.results[item].public_key_to}</td>
+      <td className="fixedCellSmaller">{data.results[item].private_key}</td>
+      <td>
+         <button className="btn btn-blue" data-remote="true" rel="nofollow" onClick={this.insertBlock}>INSERT TRANSACTION INTO NEW BLOCK TO BE MINED</button>
+      </td>
+      </tr>);
+         i++;
+      }
+   } else {
+      temp.push(
+         <tr className="noMempooledTransactions">
+         <td colSpan="9">
+            No mempooled transactions found
+         </td>
+      </tr>
+
+      );
    }
    this.setState({listTransaction: temp});
    this.setState({key: i});
@@ -59,11 +71,6 @@ class NodeMempool extends Component {
             </thead>
             <tbody>
                {this.state.listTransaction}
-               {/* <tr className="noMempooledTransactions">
-                  <td colSpan="9">
-                     No mempooled transactions found
-                  </td>
-               </tr> */}
             </tbody>
          </table>
       </div>
