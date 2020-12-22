@@ -9,4 +9,4 @@ COPY . /home/node
 
 RUN yarn install
 
-CMD ["yarn", "start"]
+CMD ["yarn", "start"]z
