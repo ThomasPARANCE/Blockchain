@@ -8,6 +8,7 @@ const getSignatureByInput = (input) => {
   sign.update(input)
   let signature = sign.sign(key, 'hex')
 
+  console.log(signature);
   return signature
 }
 
@@ -24,5 +25,8 @@ const getSignatureVerifyResult = (input) => {
         const signatureBuf = new Buffer(signatureSignedByPrivateKey, 'hex')
         const result = verifier.verify(publicKeyBuf, signatureBuf)
 
+        console.log(result);
         return result;
 }
+
+getSignatureVerifyResult();

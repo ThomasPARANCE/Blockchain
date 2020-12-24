@@ -11,8 +11,7 @@ class WalletTransaction extends Component {
       valueKeyFrom: '',
       valueKeyTo: '',
       valuePrivate: '',
-      valueSignature: '',
-      idSignature: 0
+      valueSignature: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -29,14 +28,13 @@ class WalletTransaction extends Component {
    }
 
    addTransaction = async () => {
-      const {data} = await API.addTransaction(this.state.valueAmount, this.state.valueFee, this.state.valueKeyFrom, this.state.valueKeyTo, this.state.valuePrivate);
-      this.setState({valueSignature: "signature"});
-      this.setState({idSignature: data.id});
+      const {data} = await API.addTransaction(this.state.valueAmount, this.state.valueFee, this.state.valueKeyFrom, this.state.valueKeyTo, this.state.valuePrivate, localStorage.getItem("id_user"));
+      this.setState({valueSignature: data.signature});
    }
 
    publicNetwkork = () => {
-      if (this.state.idSignature !== 0) {
-         API.publicTransactionNetwkork(this.state.idSignature);
+      if (this.state.valueSignature !== '') {
+         API.publicTransactionNetwkork(this.state.valueAmount, this.state.valueFee, this.state.valueKeyFrom, this.state.valueKeyTo, this.state.valuePrivate, this.state.valueSignature);
       }
    }
 

@@ -51,7 +51,7 @@ class NodeTransaction extends Component {
    }
 
   getAllTransactionNetwork = async () => {
-      const {data} = await API.getAllTransactionNetwork();
+      const {data} = await API.getAllTransactionNetwork(localStorage.getItem('id_user'));
       console.log("getAllTransactionNetwork");
       var temp = [];
       var test = [];

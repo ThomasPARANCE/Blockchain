@@ -81,45 +81,43 @@ async function getKeys(req, res) {
 
 async function addTransaction(req, res) {
     console.log("addTransaction1");
-    const { amount, fee, key_from, key_to, private_key } = req.body;
+    const { amount, fee, key_from, key_to, private_key, id_user } = req.body;
     console.log(amount);
     console.log(fee);
     console.log(key_from);
     console.log(key_to);
     console.log(private_key);
+    console.log(id_user);
     if (!amount || !fee || !key_from || !key_to || !private_key) {
         return res.status(400).json({
             text: "Requête invalide"
         });
     } else {
         console.log("Launch  addTransaction");
-        service.addUserTransaction(amount, fee, key_from, key_to, private_key, function(result) {
-            console.log("in addTransaction " + result);
-            if (result != null && result != false) {
-                console.log("Stored");
-                console.log(result.id);
-                return res.status(200).json({
-                    text: "Stockage réussi",
-                    id: result.id
-                });
-            }
-            console.log("not stored" + result);
-            return res.status(500).send("Error");
+        return res.status(200).json({
+            text: "Stockage réussi",
+            signature: "signature"
         });
     }
 }
 
 async function publicTransactionNetwkork(req, res) {
     console.log("publicTransactionNetwkork1");
-    const { idTransaction } = req.body;
-    console.log(idTransaction);
-    if (!idTransaction) {
+    const { amount, fee, key_from, key_to, private_key, signature } = req.body;
+    console.log(amount);
+    console.log(fee);
+    console.log(key_from);
+    console.log(key_to);
+    console.log(private_key);
+    console.log(signature);
+    if (!amount || !fee || !key_from || !key_to || !private_key || !signature) {
         return res.status(400).json({
             text: "Requête invalide"
         });
     } else {
         console.log("Launch  publicTransactionNetwkork1");
-        service.publicUserTransactionNetwkork(idTransaction, function(result) {
+        var nbr = Math.random() * (1000 - 1) + 1;
+        service.publicUserTransactionNetwkork(amount, fee, key_from, key_to, private_key, signature, nbr, function(result) {
             console.log("in publicTransactionNetwkork1 " + result);
             if (result != null && result != false) {
                 console.log("Stored");
@@ -173,21 +171,103 @@ async function getTabNetwork(req, res) {
     });
 }
 
+async function getBlockToInsertion(req, res) {
+    console.log("getBlockToInsertion1");
+    const { id_user } = req.body;
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  getBlockToInsertion");
+        service.getUserBlockBeforeInsertionBlockchain(id_user, function(result) {
+            console.log("in getBlockToInsertion " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    idBlock: result[0].id,
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
+async function sendToBlockChain(req, res) {
+    console.log("sendToBlockChain1");
+    const { id_block, id_user } = req.body;
+    console.log(id_block);
+    console.log(id_user);
+    if (!id_block || !id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  sendToBlockChain");
+        service.insertUserBlockIntoBlockchain(id_block, id_user, function(result) {
+            console.log("in sendToBlockChain " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
+async function getUserBlockchain(req, res) {
+    console.log("getUserBlockchain1");
+    const { id_user } = req.body;
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  getUserBlockchain");
+        service.getUserBlockchain(id_user, function(result) {
+            console.log("in getUserBlockchain " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
 async function getAllTransactionNetwork(req, res) {
     console.log("getAllTransactionNetwork1");
-    console.log("Launch  getAllTransactionNetwork");
-    service.getUserAllTransactionNetwork( function(result) {
-        console.log("in getAllTransactionNetwork " + result);
-        if (result != null && result != false) {
-            console.log("Stored");
-            return res.status(200).json({
-                results: result,
-                text: "Stockage réussi"
-            });
-        }
-        console.log("not stored" + result);
-        return res.status(500).send("Error");
-    });
+    const { id_user } = req.body;
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  getAllTransactionNetwork");
+        service.getUserAllTransactionNetwork(id_user, function(result) {
+            console.log("in getAllTransactionNetwork " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
 }
 
 async function sendMempool(req, res) {
@@ -216,19 +296,288 @@ async function sendMempool(req, res) {
 
 async function getAllTransactionMempool(req, res) {
     console.log("getAllTransactionMempool1");
-    console.log("Launch  getAllTransactionMempool");
-    service.getUserAllTransactionMempool( function(result) {
-        console.log("in getAllTransactionMempool " + result);
-        if (result != null && result != false) {
-            console.log("Stored");
+    const { id_user } = req.body;
+    console.log(id_user);
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  getAllTransactionMempool");
+        service.getUserAllTransactionMempool(id_user, function(result) {
+            console.log("in getAllTransactionMempool " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    text: "Stockage réussi"
+                });
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
+}
+
+async function insertTransactionBlockMine(req, res) {
+    console.log("insertTransactionBlockMine1");
+    const { id_user, id_transaction } = req.body;
+    console.log(id_user);
+    console.log(id_transaction);
+    if (!id_user || !id_transaction) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  insertTransactionBlockMine");
+        service.getUserIdLastBlockForMine(id_user, function(result1) {
+            console.log("in insertTransactionBlockMine " + result1);
+            if (result1 != null && result1 != false) {
+                console.log("Stored");
+                if (result1 === "empty") {
+                    console.log("getUserIdLastBlock");
+                    service.getUserIdLastBlock(id_user, function(result2) {
+                        console.log("in getUserIdLastBlock " + result2);
+                        if (result2 === "empty") {
+                            service.addUserBlockForMine(id_user, 0, function(result3) {
+                                console.log("in addUserBlockForMine " + result3);
+                                service.getUserIdLastBlock(id_user, function(result4){
+                                    console.log("in getUserIdLastBlock " + result4);
+                                    service.transactionIntoBlock(id_transaction, result4[0].id, function(result5) {
+                                        console.log("in transactionIntoBlock " + result5);
+                                        return res.status(200).json({
+                                            text: "Stockage réussi"
+                                        });
+                                    });
+                                });
+                            });
+                        } else {
+                            console.log("addUserBlockForMine" + result2[0].block_nbr)
+                            service.addUserBlockForMine(id_user, Number(result2[0].block_nbr) + 1, function(result3) {
+                                console.log("in addUserBlockForMine " + result3);
+                                service.getUserIdLastBlock(id_user, function(result4){
+                                    console.log("in getUserIdLastBlock " + result4);
+                                    service.transactionIntoBlock(id_transaction, result4[0].id, function(result5) {
+                                        console.log("in transactionIntoBlock " + result5);
+                                        return res.status(200).json({
+                                            text: "Stockage réussi"
+                                        });
+                                    });
+                                });
+                            });
+                        }
+                    });
+                } else {
+                    service.transactionIntoBlock(id_transaction, result1[0].id, function(result2) {
+                        console.log("in transactionIntoBlock " + result2);
+                        return res.status(200).json({
+                            text: "Stockage réussi"
+                        });
+                    });
+                }
+            } else {
+                console.log("not stored" + result1);
+                return res.status(500).send("Error");
+            }
+        });
+    }
+}
+
+async function getBlockMiner(req, res) {
+    console.log("getBlockMiner1");
+    const { id_user } = req.body;
+    console.log(id_user);
+    if (!id_user) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  getBlockMiner");
+        service.getUserBlockMiner(id_user, function(result) {
+            console.log("in getBlockMiner " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    results: result,
+                    text: "Stockage réussi"
+                });
+            } else {
+                console.log("not stored" + result);
+                return res.status(500).send("Error");
+            }
+        });
+    }
+}
+
+async function resetBlock(req, res) {
+    console.log("resetBlock1");
+    const { id_user, id_block } = req.body;
+    console.log(id_user);
+    console.log(id_block);
+    if (!id_user || !id_block) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  resetBlock");
+        service.resetUserBlockMiner(id_user, id_block, function(result) {
+            console.log("in resetBlock " + result);
+            if (result != null && result != false) {
+                console.log("Stored");
+                return res.status(200).json({
+                    text: "Stockage réussi"
+                });
+            } else {
+                console.log("not stored" + result);
+                return res.status(500).send("Error");
+            }
+        });
+    }
+}
+
+async function insertPreviousHash(req, res) {
+    console.log("insertPreviousHash1");
+    const { id_user, block_nbr, id_block } = req.body;
+    console.log(id_user);
+    console.log(block_nbr);
+    console.log(id_block);
+    if (!id_user || !block_nbr || !id_block) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  insertPreviousHash");
+        if (block_nbr == 1) {
             return res.status(200).json({
-                results: result,
+                result: "0000000000000000000000000000000000000000000000000000000000000000",
                 text: "Stockage réussi"
             });
+
+        } else {
+            service.insertUserPreviousHash(id_user, function(result) {
+                console.log("in insertPreviousHash " + result);
+                if (result != null && result != false) {
+                    console.log("Stored");
+                    service.insertIntoBlockUserPreviousHash(id_block, result, function(result2) {
+                        return res.status(200).json({
+                            hash: result,
+                            text: "Stockage réussi"
+                        });
+                    });
+                } else {
+                    console.log("not stored" + result);
+                    return res.status(500).send("Error");
+                }
+            });
         }
-        console.log("not stored" + result);
-        return res.status(500).send("Error");
-    });
+    }
+}
+
+async function Mine(req, res) {
+    console.log("Mine1");
+    const { id_user, id_block } = req.body;
+    console.log(id_user);
+    console.log(id_block);
+    if (!id_user || !id_block) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  Mine");
+        service.isMinerActive(function(result) {
+            console.log("in Mine " + result);
+            if (result == true || result == 1) {
+                console.log("Stored");
+                service.setMinerWinner(id_user, function(result) {
+                    console.log("in setMinerWinner " + result);
+                    if (result != null && result != false) {
+                        console.log("Stored");
+                        service.setBlockHashandNonce("hash", 100, id_block, function(result) {
+                            console.log("in sendBlock " + result);
+                            if (result != null && result != false) {
+                                console.log("Stored");
+                                return res.status(200).json({
+                                    is_active: true,
+                                    hash: "hash",
+                                    nonce: 100,
+                                    text: "Stockage réussi"
+                                });
+                            } else {
+                                console.log("not stored" + result);
+                                return res.status(500).send("Error");
+                            }
+                        });
+                    } else{
+                        console.log("not stored" + result);
+                        return res.status(500).send("Error");
+                    }
+                });
+
+            } else {
+                return res.status(200).json({
+                    is_active: false,
+                    text: "Stockage réussi"
+                });
+            }
+        });
+    }
+}
+
+async function sendBlock(req, res) {
+    console.log("sendBlock1");
+    const { id_user, id_block } = req.body;
+    console.log(id_user);
+    console.log(id_block);
+    if (!id_user || !id_block) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  sendBlock");
+        service.deleteAllTransactionUseless(id_block, function(result) {
+            console.log("in sendBlock " + result);
+            if (result != null && result != false) {
+                service.setAllTransactionOutMiner(id_block, function(result1) {
+                    console.log("in setAllTransactionOutMiner " + result1);
+                    if (result1 != null && result1 != false) {
+                        service.setBlockIsMined(id_block, function(result2) {
+                            console.log("in setAllTransactionOutMiner " + result2);
+                            if (result2 != null && result2 != false) {
+                                service.getBlockById(id_block, function(result3) {
+                                    console.log("in getBlockById " + result3);
+                                    if (result3 != null && result3 != false) {
+                                        service.setBlockMinedAllUser(result3[0].block_nbr, result3[0].nonce, result3[0].prev_hash, result3[0].hash, id_user, function(result4) {
+                                            if (result4 != null && result4 != false) {
+                                                console.log("Stored");
+                                                return res.status(200).json({
+                                                    text: "Stockage réussi"
+                                                });
+                                            } else {
+                                                console.log("not stored" + result);
+                                                return res.status(500).send("Error");
+                                            }
+                                        });
+                                    } else {
+                                        console.log("not stored" + result);
+                                        return res.status(500).send("Error");
+                                    }
+                                });
+                            } else {
+                                console.log("not stored" + result);
+                                return res.status(500).send("Error");
+                            }
+                        });
+                    } else {
+                        console.log("not stored" + result);
+                        return res.status(500).send("Error");
+                    }
+                });
+            } else {
+                console.log("not stored" + result);
+                return res.status(500).send("Error");
+            }
+        });
+    }
 }
 
 async function addEconomy(req, res) {
@@ -282,8 +631,17 @@ exports.addTransaction = addTransaction;
 exports.publicTransactionNetwkork = publicTransactionNetwkork;
 exports.joinNetwork = joinNetwork;
 exports.getTabNetwork = getTabNetwork;
+exports.getBlockToInsertion = getBlockToInsertion;
+exports.getUserBlockchain = getUserBlockchain;
+exports.sendToBlockChain = sendToBlockChain;
 exports.getAllTransactionNetwork = getAllTransactionNetwork;
 exports.sendMempool = sendMempool;
 exports.getAllTransactionMempool = getAllTransactionMempool;
+exports.insertTransactionBlockMine = insertTransactionBlockMine;
+exports.getBlockMiner = getBlockMiner;
+exports.resetBlock = resetBlock;
+exports.insertPreviousHash = insertPreviousHash;
+exports.Mine = Mine;
+exports.sendBlock = sendBlock;
 exports.addEconomy = addEconomy;
 exports.getAllEconomy = getAllEconomy;
