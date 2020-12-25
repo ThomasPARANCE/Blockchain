@@ -289,6 +289,7 @@ async function sendToBlockChain(req, res) {
                         console.log(id_user);
                         if (result[0].id_winner != id_user) {
                             service.copyTransactionToInsertInBlockchain(id_block, id_user, function(result) {
+                                console.log(result);
                                 if (result != null && result != false) {
                                     return res.status(200).json({
                                         text: "Stockage réussi"
@@ -300,6 +301,7 @@ async function sendToBlockChain(req, res) {
                             });
                         } else {
                             service.setAlltransactionIsBlockchain(id_block, function(result) {
+                                console.log(result);
                                 if (result != null && result != false) {
                                     return res.status(200).json({
                                         text: "Stockage réussi"
@@ -511,10 +513,13 @@ async function insertTransactionBlockMine(req, res) {
                                 console.log("in addUserBlockForMine " + result3);
                                 service.getUserIdLastBlock(id_user, function(result4){
                                     console.log("in getUserIdLastBlock " + result4);
-                                    service.transactionIntoBlock(id_transaction, result4[0].id, function(result5) {
-                                        console.log("in transactionIntoBlock " + result5);
-                                        return res.status(200).json({
-                                            text: "Stockage réussi"
+                                    var id_block = result4[0].id;
+                                    service.addTransactionSystem(id_user, id_block, function(result6) {
+                                        service.transactionIntoBlock(id_transaction, id_block, function(result5) {
+                                            console.log("in transactionIntoBlock " + result5);
+                                            return res.status(200).json({
+                                                text: "Stockage réussi"
+                                            });
                                         });
                                     });
                                 });
