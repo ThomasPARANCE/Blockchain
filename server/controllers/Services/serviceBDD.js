@@ -201,7 +201,9 @@ ServiceBDD.prototype = {
                 console.log("getUserIdLastBlock" + results);
                 if (results.length == 0)
                     callback("empty");
-                callback(results);
+                else {
+                    callback(results);
+                }
             }
           });
     },

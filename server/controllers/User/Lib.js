@@ -435,7 +435,8 @@ async function insertTransactionBlockMine(req, res) {
                     service.getUserIdLastBlock(id_user, function(result2) {
                         console.log("in getUserIdLastBlock " + result2);
                         if (result2 === "empty") {
-                            service.addUserBlockForMine(id_user, 0, function(result3) {
+                            console.log("if");
+                            service.addUserBlockForMine(id_user, 1, function(result3) {
                                 console.log("in addUserBlockForMine " + result3);
                                 service.getUserIdLastBlock(id_user, function(result4){
                                     console.log("in getUserIdLastBlock " + result4);
@@ -448,7 +449,8 @@ async function insertTransactionBlockMine(req, res) {
                                 });
                             });
                         } else {
-                            console.log("addUserBlockForMine" + result2[0].block_nbr)
+                            console.log("else");
+                            console.log("addUserBlockForMine" + result2[0].block_nbr);
                             service.addUserBlockForMine(id_user, Number(result2[0].block_nbr) + 1, function(result3) {
                                 console.log("in addUserBlockForMine " + result3);
                                 service.getUserIdLastBlock(id_user, function(result4){
