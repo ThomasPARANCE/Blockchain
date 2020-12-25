@@ -749,23 +749,28 @@ async function getAllEconomy(req, res) {
     });
 }
 
-
-
-async function test(req, res) {
-    const { id_block } = req.body;
-
-    service.getTransactionInfoForHash(id_block, function(result2) {
-        if (result2 != null && result2 != false) {
-            console.log("getTransactionInfoForHash");
-            console.log(result2);
-            createHash(3, "hashafter", result2);
-        } else {
-            console.log("not stored" + result2);
+async function checkBalance(req, res) {
+    const {id} = req.body;
+    service.checkBalance(id, function(result) {
+        if (result == false) {
+            console.log("not stored");
             return res.status(500).send("Error");
+        } else {
+            if (result[0].amount <= result[0].balance) {
+                return res.status(200).json({
+                    results: true,
+                    text: "Requete réussi et assez de balance"
+                });   
+            } else {
+                return res.status(200).json({
+                    results: false,
+                    text: "Requete réussi mais pas assez de balance"
+                });
+            }
         }
     });
-}
 
+}
 //On exporte nos deux fonctions
 
 exports.login = login;
@@ -791,3 +796,4 @@ exports.Mine = Mine;
 exports.sendBlock = sendBlock;
 exports.addEconomy = addEconomy;
 exports.getAllEconomy = getAllEconomy;
+exports.checkBalance = checkBalance;

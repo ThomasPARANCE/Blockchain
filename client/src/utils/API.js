@@ -109,5 +109,9 @@ export default {
 
     logout: function() {
         localStorage.clear();
+    },
+
+    checkBalance: function(id) {
+        return axios.post(`${burl}/user/checkBalance`, {id}, { headers: headers});
     }
 };

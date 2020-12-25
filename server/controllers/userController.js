@@ -24,4 +24,5 @@ module.exports = function (app) {
     app.post('/sendBlock', account.sendBlock);
     app.post('/addEconomy', account.addEconomy);
     app.post('/getAllEconomy', account.getAllEconomy);
+    app.post('/checkBalance', account.checkBalance);
 }

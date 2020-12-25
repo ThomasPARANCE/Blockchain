@@ -15,12 +15,19 @@ class NodeTransaction extends Component {
 
   }
 
-  checkBalance = (event) => {
+  checkBalance = async (event) => {
       const target = event.target;
-      target.className = "btn btn-success";
       var key = Number(target.name) - 1;
+      var id = this.state.listState[key].id;
+      const {data} = await API.checkBalance(id);
       var list = this.state.listState;
-      list[key].isBalance = true;
+      if (data.results === true) {
+         target.className = "btn btn-success"; 
+         list[key].isBalance = true;
+      } else {
+         target.className = "btn btn-danger";  
+         list[key].isBalance = false;
+      }
       this.setState({listState: list});
       if (this.state.listState[key].isBalance && this.state.listState[key].isSignature) {
          console.log("OK");
