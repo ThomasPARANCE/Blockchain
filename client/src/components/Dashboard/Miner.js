@@ -51,6 +51,8 @@ class Miner extends Component {
 
   isNetwork = async () => {
           const { data } = await API.getBlockMiner(localStorage.getItem("id_user"));
+          console.log("isNetwork");
+          console.log(data);
           var tmp = [];
           var tempTable = [];
           var i = 1;
@@ -73,15 +75,15 @@ class Miner extends Component {
          }
          tempIdBlock = data.idBlock;
          tempBlockNbr = data.results[0].block_nbr;
+         this.setState({idBlock: tempIdBlock});
+         this.setState({blockNbr: tempBlockNbr});
+         this.setState({blockMinerTable: tempTable});
          if (data.results[0].prev_hash === null)
          {
            tempPreviousHash = "";
          } else {
            tempPreviousHash = data.results[0].prev_hash;
          }
-         this.setState({idBlock: tempIdBlock});
-         this.setState({blockNbr: tempBlockNbr});
-         this.setState({blockMinerTable: tempTable});
          this.setState({previous_hash: tempPreviousHash});
             tmp.push(
               <div key={i} >

@@ -90,7 +90,7 @@ ServiceBDD.prototype = {
     getIdBlockByIduser : function(id_user, callback)
     {
         console.log("getIdBlockByIduser");
-        pool.query(`select * from block where is_mined=true and id_user =${id_user} order by block_nbr desc limit 1`, (err, results) => {
+        pool.query(`select * from block where is_mined=true and id_user =${id_user} order by block_nbr desc`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
@@ -104,6 +104,45 @@ ServiceBDD.prototype = {
     {
         console.log("getUserBlockBeforeInsertionBlockchain");
         pool.query(`update block set block.is_blockchain=true, block.id_blockchain=(select users.id_blockchain from users where users.id=${id_user}) where block.id =${id_block}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+
+    },
+
+    setAlltransactionIsBlockchain : function(id_block, callback)
+    {
+        console.log("setAlltransactionIsBlockchain");
+        pool.query(`update transaction set is_blockchain=true where id_block=${id_block}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(true);
+            }
+          });
+
+    },
+
+    copyTransactionToInsertInBlockchain : function(id_block, id_user, callback)
+    {
+        console.log("copyTransactionToInsertInBlockchain");
+        pool.query(`INSERT INTO transaction(amount,fee,public_key_from,public_key_to,signature,is_mempool,is_network,private_key,id_group,is_blockchain,id_block,id_user) SELECT amount,fee,public_key_from,public_key_to,signature,is_mempool,is_network,private_key,id_group,true,${id_block},${id_user} FROM transaction WHERE id_block=(SELECT id FROM block WHERE id_user=(SELECT id_winner FROM miner))`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(true);
+            }
+          });
+
+    },
+
+    getIdWinner : function(callback)
+    {
+        console.log("getIdWinner");
+        pool.query(`select * from miner`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
@@ -252,6 +291,20 @@ ServiceBDD.prototype = {
           });
     },
 
+    addTransactionSystem : function(id_user, id_block, callback)
+    {
+        console.log("addTransactionSystem");
+        pool.query(`Insert into transaction(amount, fee, public_key_from, signature, id_block, is_in_miner, id_user, id_group, public_key_to) values(1000, 0, 'SYSTEM', '/', ${id_block}, true, ${id_user}, 1, Select public_key where id_user=1) `, (err, results) => {
+            if (err) {
+                console.log(false);
+                callback(false);
+            } else {
+                console.log(results);
+                callback(true);
+            }
+          });
+    },
+
     transactionIntoBlock : function(id_transaction, id_block, callback)
     {
         console.log("publicUserTransactionNetwkork");
@@ -269,7 +322,7 @@ ServiceBDD.prototype = {
     getUserBlockMiner : function(id_user, callback)
     {
         console.log("getUserBlockMiner");
-        pool.query(`select * from block inner join transaction on block.id = transaction.id_block where is_blockchain = false and is_mined = false and block.id_user=${id_user} and is_in_miner=true`, (err, results) => {
+        pool.query(`select block.id, block_nbr, nonce, prev_hash, hash, is_blockchain, id_blockchain, block.id_user, is_mined, transaction.id as idTransaction, amount, fee, public_key_from, public_key_to, signature, is_mempool, id_block, is_network, private_key, is_in_miner, transaction.id_user as id_userTransaction, id_group from block inner join transaction on block.id = transaction.id_block where is_blockchain = false and is_mined = false and block.id_user=${id_user} and is_in_miner=true`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
@@ -344,10 +397,10 @@ ServiceBDD.prototype = {
           });
     },
 
-    getTransactionInfoForHash : function(id_block, callback)
+    getTransactionInfoForHash : function(callback)
     {
         console.log("getTransactionInfoForHash");
-        pool.query(`select amount,fee, public_key_from, public_key_to, signature from transaction where id_block=${id_block}`, (err, results) => {
+        pool.query(`select amount,fee, public_key_from, public_key_to, signature from transaction where is_in_miner=true and id_block=(Select id from block where  is_blockchain=false and id_user =(Select id_winner from miner))`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
@@ -408,7 +461,7 @@ ServiceBDD.prototype = {
     deleteAllTransactionUseless: function(id_block, callback)
     {
         console.log("deleteAllTransactionUseless");
-        pool.query(`DELETE FROM transaction WHERE(id_block!=${id_block} OR id_block IS NULL)AND id_group in(SELECT test FROM(SELECT t2.id_group AS test FROM transaction AS t2 WHERE t2.id_block=${id_block}) as t2) `, (err, results) => {
+        pool.query(`DELETE FROM transaction WHERE is_blockchain!=true and (id_block!=${id_block} OR id_block IS NULL)AND id_group in(SELECT test FROM(SELECT t2.id_group AS test FROM transaction AS t2 WHERE t2.id_block=${id_block}) as t2) `, (err, results) => {
             if (err) {
                 callback(false);
             } else {

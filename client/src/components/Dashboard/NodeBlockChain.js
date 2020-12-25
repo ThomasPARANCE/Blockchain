@@ -51,7 +51,7 @@ class NodeBlockChain extends Component {
   sendToBlockChain = () => {
     console.log("sendToBlockChain");
     console.log(this.state.idBlock);
-    // API.sendToBlockChain(this.state.idBlock, localStorage.getItem("id_user"));
+    API.sendToBlockChain(this.state.idBlock, localStorage.getItem("id_user"));
     console.log(this.state.checkCoinbase);
     console.log(this.state.checkSignature);
     console.log(this.state.checkBalance);
