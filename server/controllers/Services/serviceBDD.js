@@ -322,7 +322,7 @@ ServiceBDD.prototype = {
     getUserBlockMiner : function(id_user, callback)
     {
         console.log("getUserBlockMiner");
-        pool.query(`select block.id, block_nbr, nonce, prev_hash, hash, is_blockchain, id_blockchain, block.id_user, is_mined, transaction.id as idTransaction, amount, fee, public_key_from, public_key_to, signature, is_mempool, id_block, is_network, private_key, is_in_miner, transaction.id_user as id_userTransaction, id_group from block inner join transaction on block.id = transaction.id_block where is_blockchain = false and is_mined = false and block.id_user=${id_user} and is_in_miner=true`, (err, results) => {
+        pool.query(`select block.id, block_nbr, nonce, prev_hash, hash, block.is_blockchain, id_blockchain, block.id_user, is_mined, transaction.id as idTransaction, amount, fee, public_key_from, public_key_to, signature, is_mempool, id_block, is_network, private_key, is_in_miner, transaction.id_user as id_userTransaction, id_group from block inner join transaction on block.id = transaction.id_block where block.is_blockchain = false and is_mined = false and block.id_user=${id_user} and is_in_miner=true`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
