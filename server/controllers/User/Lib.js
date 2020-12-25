@@ -240,12 +240,16 @@ async function getBlockToInsertion(req, res) {
         service.getUserBlockBeforeInsertionBlockchain(id_user, function(result) {
             console.log("in getBlockToInsertion " + result);
             if (result != null && result != false) {
+                var temp = result;
                 console.log("Stored");
-                return res.status(200).json({
-                    results: result,
-                    idBlock: result[0].id,
-                    text: "Stockage réussi"
-                });
+                service.getIdBlockByIduser(id_user, function(result2) {
+                    console.log("in getIdBlockByIduser " + result2);
+                    return res.status(200).json({
+                        results: temp,
+                        idBlock: result2[0].id,
+                        text: "Stockage réussi"
+                    });
+                })
             }
             console.log("not stored" + result);
             return res.status(500).send("Error");

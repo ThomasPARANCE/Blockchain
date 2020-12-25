@@ -76,8 +76,21 @@ ServiceBDD.prototype = {
 
     getUserBlockBeforeInsertionBlockchain : function(id_user, callback)
     {
-        console.log("getUserBlockBeforeInsertionBlockchain");
-        pool.query(`select block.id, block_nbr, nonce, prev_hash, hash, is_blockchain, id_blockchain, block.id_user, is_mined, transaction.id as idTransaction, amount, fee, public_key_from, public_key_to, signature, is_mempool, id_block, is_network, private_key, is_in_miner, transaction.id_user as id_userTransaction, id_group from block inner join transaction on block.id = transaction.id_block where is_mined = true and block.id_user=${id_user}`, (err, results) => {
+        console.log("getUserBlockBeforeInsertionBlockchain" + id_user);
+        pool.query(`select block.id, block_nbr, nonce, prev_hash, hash, is_blockchain, id_blockchain, block.id_user, is_mined, transaction.id as idTransaction, amount, fee, public_key_from, public_key_to, signature, is_mempool, id_block, is_network, private_key, is_in_miner, transaction.id_user as id_userTransaction, id_group from block inner join transaction on block.id = transaction.id_block where is_mined = true and block.id_user=(Select id_winner from miner)`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+
+    },
+
+    getIdBlockByIduser : function(id_user, callback)
+    {
+        console.log("getIdBlockByIduser");
+        pool.query(`select * from block where is_mined=true and id_user =${id_user} order by block_nbr desc limit 1`, (err, results) => {
             if (err) {
                 callback(false);
             } else {

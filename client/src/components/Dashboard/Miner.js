@@ -71,7 +71,7 @@ class Miner extends Component {
             );
             i++;
          }
-         tempIdBlock = data.results[0].id_block;
+         tempIdBlock = data.idBlock;
          tempBlockNbr = data.results[0].block_nbr;
          if (data.results[0].prev_hash === null)
          {
