@@ -129,7 +129,7 @@ ServiceBDD.prototype = {
     copyTransactionToInsertInBlockchain : function(id_block, id_user, callback)
     {
         console.log("copyTransactionToInsertInBlockchain");
-        pool.query(`INSERT INTO transaction(amount,fee,public_key_from,public_key_to,signature,is_mempool,is_network,private_key,id_group,is_blockchain,id_block,id_user) SELECT amount,fee,public_key_from,public_key_to,signature,is_mempool,is_network,private_key,id_group,true,132,2 FROM transaction WHERE id_block=(SELECT id FROM block WHERE id_user=(SELECT id_winner FROM miner) order by block_nbr desc limit 1)`, (err, results) => {
+        pool.query(`INSERT INTO transaction(amount,fee,public_key_from,public_key_to,signature,is_mempool,is_network,private_key,id_group,is_blockchain,id_block,id_user) SELECT amount,fee,public_key_from,public_key_to,signature,is_mempool,is_network,private_key,id_group,true,${id_block},${id_user} FROM transaction WHERE id_block=(SELECT id FROM block WHERE id_user=(SELECT id_winner FROM miner) order by block_nbr desc limit 1)`, (err, results) => {
             if (err) {
                 callback(false);
             } else {
