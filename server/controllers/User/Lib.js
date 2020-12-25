@@ -79,6 +79,27 @@ async function getKeys(req, res) {
     }
 }
 
+class Transaction {
+    constructor(amount, fee, from, to, priv) {
+      this.amount = amount;
+      this.fee = fee;
+      this.from = from;
+      this.to = to;
+      this.priv = priv;
+    }
+  }
+
+function createSignature(amount, fee, from, to, priv) {
+    console.log("createSignature");
+    var transaction = new Transaction(amount, fee, from, to, priv);
+
+    var code = String(transaction.amount) + String(transaction.fee) + transaction.from + transaction.to + transaction.priv;
+    console.log(code);
+    var hash = crypto.createHash('sha256').update(code).digest('base64');
+    console.log("ME" + hash);
+    return ("ME" + hash);
+}
+
 async function addTransaction(req, res) {
     console.log("addTransaction1");
     const { amount, fee, key_from, key_to, private_key, id_user } = req.body;
@@ -93,10 +114,11 @@ async function addTransaction(req, res) {
             text: "Requête invalide"
         });
     } else {
+        var signature = createSignature(amount, fee, key_from, key_to, private_key);
         console.log("Launch  addTransaction");
         return res.status(200).json({
             text: "Stockage réussi",
-            signature: "signature"
+            signature: signature
         });
     }
 }
@@ -169,6 +191,41 @@ async function getTabNetwork(req, res) {
         console.log("not stored" + result);
         return res.status(500).send("Error");
     });
+}
+
+async function checkSignature(req, res) {
+    console.log("checkSignature1");
+    const { id } = req.body;
+    if (!id) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  checkSignature");
+        service.getSignatureById(id, function(result) {
+            console.log("in checkSignature " + result);
+            if (result != null && result != false) {
+                console.log(result[0]);
+                var signature = createSignature(result[0].amount, result[0].fee, result[0].public_key_from, result[0].public_key_to, result[0].private_key);
+                console.log(signature);
+                console.log(result[0].signature);
+                console.log("Stored");
+                if(result[0].signature === signature) {
+                    return res.status(200).json({
+                        checkSignature: true,
+                        text: "Stockage réussi"
+                    });
+                } else {
+                    return res.status(200).json({
+                        checkSignature: false,
+                        text: "Stockage réussi"
+                    });
+                }
+            }
+            console.log("not stored" + result);
+            return res.status(500).send("Error");
+        });
+    }
 }
 
 async function getBlockToInsertion(req, res) {
@@ -244,6 +301,45 @@ async function getUserBlockchain(req, res) {
             return res.status(500).send("Error");
         });
     }
+}
+
+async function checkHash(req, res) {
+    console.log("checkHash1");
+    const { id_block, prev_hash, block_nbr, hash } = req.body;
+    console.log(id_block);
+    console.log(prev_hash);
+    console.log(block_nbr);
+    console.log(hash);
+    if (!id_block || !prev_hash || !block_nbr || !hash) {
+        return res.status(400).json({
+            text: "Requête invalide"
+        });
+    } else {
+        console.log("Launch  checkHash");
+        service.getTransactionInfoForHash(id_block, function(result2) {
+            if (result2 != null && result2 != false) {
+                console.log("getTransactionInfoForHash");
+                console.log(result2);
+                var checkhash = createHash(block_nbr, prev_hash, result2);
+                console.log(checkhash);
+                if (hash === checkhash) {
+                    return res.status(200).json({
+                        is_check: true,
+                        text: "Stockage réussi"
+                    });
+                } else {
+                    return res.status(200).json({
+                        is_check: false,
+                        text: "Stockage réussi"
+                    });
+                }
+            } else {
+                console.log("not stored" + result);
+                return res.status(500).send("Error");
+            }
+        });
+    }
+
 }
 
 async function getAllTransactionNetwork(req, res) {
@@ -473,9 +569,28 @@ async function insertPreviousHash(req, res) {
     }
 }
 
+var crypto = require('crypto');
+
+class Block {
+ constructor(nbr, previousHash, data) {
+   this.nbr = nbr;
+   this.previousHash = previousHash;
+   this.data = data;
+ }
+}
+
+function createHash(nbr_block, prev_hash, data) {
+  var block = new Block(nbr_block, prev_hash, data);
+
+  var code = block.previousHash + block.data + block.nbr;
+  var hash = crypto.createHash('sha256').update(code).digest('hex');
+  console.log("00" + hash);
+  return ("00" + hash);
+}
+
 async function Mine(req, res) {
     console.log("Mine1");
-    const { id_user, id_block } = req.body;
+    const { id_user, id_block, nbr_block, prev_hash } = req.body;
     console.log(id_user);
     console.log(id_block);
     if (!id_user || !id_block) {
@@ -492,15 +607,26 @@ async function Mine(req, res) {
                     console.log("in setMinerWinner " + result);
                     if (result != null && result != false) {
                         console.log("Stored");
-                        service.setBlockHashandNonce("hash", 100, id_block, function(result) {
-                            console.log("in sendBlock " + result);
-                            if (result != null && result != false) {
-                                console.log("Stored");
-                                return res.status(200).json({
-                                    is_active: true,
-                                    hash: "hash",
-                                    nonce: 100,
-                                    text: "Stockage réussi"
+                        service.getTransactionInfoForHash(id_block, function(result2) {
+                            if (result2 != null && result2 != false) {
+                                console.log("getTransactionInfoForHash");
+                                console.log(result2);
+                                var hash = createHash(nbr_block, prev_hash, result2);
+                                var randomNbr = Math.random() * (999 - 1) + 1;
+                                service.setBlockHashandNonce(hash, randomNbr, id_block, function(result) {
+                                    console.log("in sendBlock " + result);
+                                    if (result != null && result != false) {
+                                        console.log("Stored");
+                                        return res.status(200).json({
+                                            is_active: true,
+                                            hash: hash,
+                                            nonce: randomNbr,
+                                            text: "Stockage réussi"
+                                        });
+                                    } else {
+                                        console.log("not stored" + result);
+                                        return res.status(500).send("Error");
+                                    }
                                 });
                             } else {
                                 console.log("not stored" + result);
@@ -622,6 +748,24 @@ async function getAllEconomy(req, res) {
         return res.status(500).send("Error");
     });
 }
+
+
+
+async function test(req, res) {
+    const { id_block } = req.body;
+
+    service.getTransactionInfoForHash(id_block, function(result2) {
+        if (result2 != null && result2 != false) {
+            console.log("getTransactionInfoForHash");
+            console.log(result2);
+            createHash(3, "hashafter", result2);
+        } else {
+            console.log("not stored" + result2);
+            return res.status(500).send("Error");
+        }
+    });
+}
+
 //On exporte nos deux fonctions
 
 exports.login = login;
@@ -633,8 +777,10 @@ exports.joinNetwork = joinNetwork;
 exports.getTabNetwork = getTabNetwork;
 exports.getBlockToInsertion = getBlockToInsertion;
 exports.getUserBlockchain = getUserBlockchain;
+exports.checkHash = checkHash;
 exports.sendToBlockChain = sendToBlockChain;
 exports.getAllTransactionNetwork = getAllTransactionNetwork;
+exports.checkSignature = checkSignature;
 exports.sendMempool = sendMempool;
 exports.getAllTransactionMempool = getAllTransactionMempool;
 exports.insertTransactionBlockMine = insertTransactionBlockMine;

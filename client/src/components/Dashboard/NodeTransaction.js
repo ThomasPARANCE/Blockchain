@@ -24,20 +24,29 @@ class NodeTransaction extends Component {
       this.setState({listState: list});
       if (this.state.listState[key].isBalance && this.state.listState[key].isSignature) {
          console.log("OK");
+         document.getElementById(target.name).className = 'btn btn-blue';
          // document.getElementById(target.name).removeAttribute('disabled');
       }
   }
 
-  checkSignature = (event) => {
+  checkSignature = async (event) => {
       const target = event.target;
-      target.className = "btn btn-success";
       var key = Number(target.name) - 1;
       var list = this.state.listState;
-      list[key].isSignature = true;
+      var id = this.state.listState[key].id;
+      const {data} = await API.checkSignature(id);
+      console.log(data);
+      if (data.checkSignature) {
+         target.className = "btn btn-success";
+         list[key].isSignature = true;
+      } else {
+         target.className = "btn btn-danger";
+         list[key].isSignature = false;
+      }
       this.setState({listState: list});
       if (this.state.listState[key].isBalance && this.state.listState[key].isSignature) {
          console.log("OK");
-         // document.getElementById(target.name).removeAttribute('disabled');
+         document.getElementById(target.name).className = 'btn btn-blue';
       }
    }
 
@@ -45,9 +54,11 @@ class NodeTransaction extends Component {
       console.log("sendMempoolTransac");
       const target = event.target;
       var key = Number(target.name) - 1;
-      var id = this.state.listState[key].id;
-      API.sendMempool(id);
-      document.getElementById("gossipTransactionTable").deleteRow(Number(target.name));
+      if (this.state.listState[key].isBalance && this.state.listState[key].isSignature) {
+         var id = this.state.listState[key].id;
+         API.sendMempool(id);
+         document.getElementById("gossipTransactionTable").deleteRow(Number(target.name));
+      }
    }
 
   getAllTransactionNetwork = async () => {
@@ -68,7 +79,7 @@ class NodeTransaction extends Component {
                <td>{data.results[item].fee}</td>
                <td className="fixedCellSmaller">{data.results[item].public_key_from}</td>
                <td className="fixedCellSmaller">{data.results[item].public_key_to}</td>
-               <td className="fixedCellSmaller">{data.results[item].private_key}</td>
+               <td className="fixedCellSmaller">{data.results[item].signature}</td>
                <td>
                   <button className="btn btn-blue" name={i} data-remote="true" onClick={this.checkBalance}>CHECK BALANCE</button>
                </td>
@@ -76,7 +87,7 @@ class NodeTransaction extends Component {
                   <button className="btn btn-blue" name={i} data-remote="true" onClick={this.checkSignature} >CHECK SIGNATURE</button>
                </td>
                <td>
-                  <button id={i} name={i} className="btn btn-blue" data-remote="true" onClick={this.sendMempoolTransac}>SEND TO MEMPOOL</button>
+                  <button id={i} name={i} className="btn btn-secondary" data-remote="true" onClick={this.sendMempoolTransac}>SEND TO MEMPOOL</button>
                </td>
                </tr>);
             i++;

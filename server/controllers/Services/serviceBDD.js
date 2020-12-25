@@ -151,6 +151,18 @@ ServiceBDD.prototype = {
           });
     },
 
+    getSignatureById : function(id, callback)
+    {
+        console.log("getSignatureById");
+        pool.query(`select * from transaction where id=${id}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+    },
+
     sendUserMempool : function(id, callback)
     {
         console.log("sendUserMempool");
@@ -315,6 +327,19 @@ ServiceBDD.prototype = {
                 callback(true);
             }
           });
+    },
+
+    getTransactionInfoForHash : function(id_block, callback)
+    {
+        console.log("getTransactionInfoForHash");
+        pool.query(`select amount,fee, public_key_from, public_key_to, signature from transaction where id_block=${id_block}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results);
+            }
+          });
+
     },
 
     setBlockHashandNonce : function(hash, nonce, id_block, callback)

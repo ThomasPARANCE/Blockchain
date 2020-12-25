@@ -21,7 +21,7 @@ class Miner extends Component {
 
   Mine = async () => {
     console.log("Mine");
-    const {data} = await API.Mine(localStorage.getItem("id_user"), this.state.idBlock);
+    const {data} = await API.Mine(localStorage.getItem("id_user"), this.state.idBlock, this.state.blockNbr, this.state.previous_hash);
     console.log(data);
     var tempnonce = data.nonce;
     var temphash = data.hash;

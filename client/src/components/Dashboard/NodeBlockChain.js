@@ -7,6 +7,9 @@ class NodeBlockChain extends Component {
     this.state = {
       blockInsertion: [],
       blockInsertionTable: [],
+      previousHash: "",
+      hash: "",
+      blockNbr: 0,
       key: 0,
       checkCoinbase: false,
       checkSignature: false,
@@ -25,29 +28,30 @@ class NodeBlockChain extends Component {
 
   checkBalance = () => {
     console.log("checkBalance");
-    var temp = this.state.checkBalance;
-    this.setState({checkBalance: !temp});
+    this.setState({checkBalance: true});
     console.log(this.state.checkBalance);
   }
 
   checkSignature = () => {
     console.log("checkSignature");
-    var temp = this.state.checkSignature;
-    this.setState({checkSignature: !temp});
+    this.setState({checkSignature: true});
     console.log(this.state.checkSignature);
   }
 
-  checkHash= () => {
+  checkHash = async () => {
     console.log("checkHash");
-    var temp = this.state.checkHash;
-    this.setState({checkHash: !temp});
+    const {data} = await API.checkHash(this.state.idBlock, this.state.previousHash, this.state.blockNbr, this.state.hash);
+    var temp = false
+    if (data.is_check)
+      temp = true;
+    this.setState({checkHash: temp});
     console.log(this.state.checkHash);
   }
 
   sendToBlockChain = () => {
     console.log("sendToBlockChain");
     console.log(this.state.idBlock);
-    API.sendToBlockChain(this.state.idBlock, localStorage.getItem("id_user"));
+    // API.sendToBlockChain(this.state.idBlock, localStorage.getItem("id_user"));
     console.log(this.state.checkCoinbase);
     console.log(this.state.checkSignature);
     console.log(this.state.checkBalance);
@@ -63,6 +67,9 @@ class NodeBlockChain extends Component {
     var tempTable = [];
     var i = 1;
     var tempidBlock = 0;
+    var tempPreviousHash = "";
+    var tempHash = "";
+    var tempBlockNbr = 0;
     if (data.results.length > 0) {
       for (var item in data.results) {
         tempTable.push(
@@ -77,10 +84,16 @@ class NodeBlockChain extends Component {
         i++;
      }
      tempidBlock = data.idBlock;
+     tempPreviousHash = data.results[0].prev_hash;
+     tempBlockNbr = data.results[0].block_nbr;
+     tempHash = data.results[0].hash;
      console.log(tempidBlock);
      console.log(data.idBlock);
      this.setState({blockInsertionTable: tempTable});
      this.setState({idBlock: tempidBlock});
+     this.setState({previousHash: tempPreviousHash});
+     this.setState({blockNbr: tempBlockNbr});
+     this.setState({hash: tempHash});
       temp.push(
         <div key={i}>
         <div className="form-group">
@@ -127,7 +140,7 @@ class NodeBlockChain extends Component {
             <span className="col-5"></span>
             <span className="col-5 small py-2">COINBASE OK?</span>
             <span className="col-2">
-            <input type="checkbox" name="coinbase_ok" id="coinbase_ok" value="true" data-remote="true" onClick={this.setState({checkCoinbase: !this.state.checkCoinbase})} />
+            <input type="checkbox" name="coinbase_ok" id="coinbase_ok" value="true" data-remote="true" checked={this.state.checkCoinbase || this.props.checkCoinbase} onChange={() => this.setState({checkCoinbase: !this.state.checkCoinbase})} />
             </span>
         </div>
         <div className="row signatures ">
@@ -136,7 +149,7 @@ class NodeBlockChain extends Component {
             </span>
             <span className="col-5 small py-2">SIGNATURES OK?</span>
             <span className="col-2 ">
-            <input type="checkbox" name="signatures_ok" id="signatures_ok" value={this.state.checkSignature} data-remote="true" readOnly="readonly"/>
+            <input type="checkbox" name="signatures_ok" id="signatures_ok" value="true" checked={this.state.checkSignature || this.props.checkSignature} data-remote="true" readOnly="readonly"/>
             </span>
         </div>
         <div className="row balances ">
@@ -145,14 +158,14 @@ class NodeBlockChain extends Component {
             </span>
             <span className="col-5 small py-2">SUFFICIENT BALANCES?</span>
             <span className="col-2 ">
-            <input type="checkbox" name="sufficient_balances" id="sufficient_balances" value={this.state.checkBalance} data-remote="true" readOnly="readonly" />
+            <input type="checkbox" name="sufficient_balances" id="sufficient_balances" value="true" checked={this.state.checkBalance || this.props.checkBalance} data-remote="true" readOnly="readonly" />
             </span>
         </div>
         <div className="row previousHashOk ">
             <span className="col-5 "></span>
             <span className="col-5 small py-2">PREVIOUS HASH OK?</span>
             <span className="col-2 ">
-            <input type="checkbox" name="previous_hash_ok" id="previous_hash_ok" value="true" data-remote="true" onClick={this.setState({checkPreviousHash: !this.state.checkPreviousHash})}/>
+            <input type="checkbox" name="previous_hash_ok" id="previous_hash_ok" value="true" checked={this.state.checkPreviousHash || this.props.checkPreviousHash} data-remote="true" onChange={ () => this.setState({checkPreviousHash: !this.state.checkPreviousHash})}/>
             </span>
         </div>
         <div className="row hash ">
@@ -162,14 +175,14 @@ class NodeBlockChain extends Component {
             </span>
             <span className="col-5 small py-2">HASH OK?</span>
             <span className="col-2 ">
-            <input type="checkbox" name="hash_ok" id="hash_ok" value={this.state.checkHash} data-remote="true" readOnly="readonly"/>
+            <input type="checkbox" name="hash_ok" id="hash_ok" value="true" checked={this.state.checkHash || this.props.checkHash} data-remote="true" readOnly="readonly"/>
             </span>
         </div>
         <div className="row approvalOfBlock ">
             <span className="col-5 "></span>
             <span className="col-5 small py-2">MY APPROVAL OF BLOCK</span>
             <span className="col-2 ">
-            <input type="checkbox" name="approval_of_block" id="approval_of_block" value="true" data-remote="true" onClick={this.setState({checkBlock: !this.state.checkBlock})}/>
+            <input type="checkbox" name="approval_of_block" id="approval_of_block" value="true" checked={this.state.checkBlock || this.props.checkBlock} data-remote="true" onClick={ () => this.setState({checkBlock: !this.state.checkBlock})}/>
             </span>
         </div>
         <div className="text-center">

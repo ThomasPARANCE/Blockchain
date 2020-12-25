@@ -47,12 +47,20 @@ export default {
         return axios.post(`${burl}/user/getUserBlockchain`, {id_user}, { headers: headers });
     },
 
+    checkHash: function(id_block, prev_hash, block_nbr, hash) {
+        return axios.post(`${burl}/user/checkHash`, {id_block, prev_hash, block_nbr, hash}, { headers: headers });
+    },
+
     sendToBlockChain: function(id_block, id_user) {
         return axios.post(`${burl}/user/sendToBlockChain`, {id_block, id_user}, { headers: headers });
     },
 
     getAllTransactionNetwork: function(id_user) {
         return axios.post(`${burl}/user/getAllTransactionNetwork`, {id_user}, { headers: headers });
+    },
+
+    checkSignature: function(id) {
+        return axios.post(`${burl}/user/checkSignature`, {id}, { headers: headers });
     },
 
     sendMempool: function(id) {
@@ -79,8 +87,8 @@ export default {
         return axios.post(`${burl}/user/insertPreviousHash`, {id_user, block_nbr, id_block}, { headers: headers });
     },
 
-    Mine: function(id_user, id_block) {
-        return axios.post(`${burl}/user/Mine`, {id_user, id_block}, { headers: headers });
+    Mine: function(id_user, id_block, nbr_block, prev_hash) {
+        return axios.post(`${burl}/user/Mine`, {id_user, id_block, nbr_block, prev_hash}, { headers: headers });
     },
 
     sendBlock: function(id_user, id_block) {
