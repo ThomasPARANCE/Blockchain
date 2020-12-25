@@ -545,12 +545,13 @@ async function insertPreviousHash(req, res) {
         });
     } else {
         console.log("Launch  insertPreviousHash");
-        if (block_nbr == 1) {
-            return res.status(200).json({
-                result: "0000000000000000000000000000000000000000000000000000000000000000",
-                text: "Stockage réussi"
+        if (block_nbr === 1) {
+            service.insertIntoBlockUserPreviousHash(id_block, "0000000000000000000000000000000000000000000000000000000000000000", function(result2) {
+                return res.status(200).json({
+                    result: "0000000000000000000000000000000000000000000000000000000000000000",
+                    text: "Stockage réussi"
+                });
             });
-
         } else {
             service.insertUserPreviousHash(id_user, function(result) {
                 console.log("in insertPreviousHash " + result);

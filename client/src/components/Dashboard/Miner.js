@@ -56,6 +56,7 @@ class Miner extends Component {
           var i = 1;
           var tempIdBlock = 0;
           var tempBlockNbr = 0;
+          var tempPreviousHash = "";
           console.log(data.results);
         if (data.results.length > 0) {
           for (var item in data.results) {
@@ -72,9 +73,16 @@ class Miner extends Component {
          }
          tempIdBlock = data.results[0].id_block;
          tempBlockNbr = data.results[0].block_nbr;
+         if (data.results[0].prev_hash === null)
+         {
+           tempPreviousHash = "";
+         } else {
+           tempPreviousHash = data.results[0].prev_hash;
+         }
          this.setState({idBlock: tempIdBlock});
          this.setState({blockNbr: tempBlockNbr});
          this.setState({blockMinerTable: tempTable});
+         this.setState({previous_hash: tempPreviousHash});
             tmp.push(
               <div key={i} >
                 <div className="containerBlockChain" id="tabPaneContentBlockMining">
