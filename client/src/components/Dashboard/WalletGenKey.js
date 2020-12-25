@@ -33,16 +33,20 @@ class WalletGenKey extends Component {
    const {data} = await API.getKeys(localStorage.getItem("id_user"));
    console.log(data);
    var temp=[];
-   temp.push(<tr key="1" >
-      <th>1</th>
-      <td className="fixedCell">
-        <span>{data.results[0].public_key}</span>
-      </td>
-      <td className="fixedCell">
-        <span>{data.results[0].private_key}</span>
-      </td>
-      <td>1000.0</td>
-    </tr>);
+   if (data.results.length === 0) {
+      temp = [];
+   } else {
+      temp.push(<tr key="1" >
+         <th>1</th>
+         <td className="fixedCell">
+         <span>{data.results[0].public_key}</span>
+         </td>
+         <td className="fixedCell">
+         <span>{data.results[0].private_key}</span>
+         </td>
+         <td>1000.0</td>
+      </tr>);
+   }
     this.setState({listKey: temp});
    }
 

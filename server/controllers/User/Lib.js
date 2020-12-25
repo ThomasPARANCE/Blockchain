@@ -760,7 +760,7 @@ async function checkBalance(req, res) {
                 return res.status(200).json({
                     results: true,
                     text: "Requete réussi et assez de balance"
-                });   
+                });
             } else {
                 return res.status(200).json({
                     results: false,
