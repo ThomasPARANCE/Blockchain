@@ -23,12 +23,12 @@ export default {
         return axios.post(`${burl}/user/getKeys`, {id_user}, { headers: headers });
     },
 
-    addTransaction: function(amount, fee, key_from, key_to, private_key) {
-        return axios.post(`${burl}/user/addTransaction`, {amount, fee, key_from, key_to, private_key}, { headers: headers });
+    addTransaction: function(amount, fee, key_from, key_to, private_key, id_user) {
+        return axios.post(`${burl}/user/addTransaction`, {amount, fee, key_from, key_to, private_key, id_user}, { headers: headers });
     },
 
-    publicTransactionNetwkork: function(idTransaction) {
-        return axios.post(`${burl}/user/publicTransactionNetwkork`, {idTransaction}, { headers: headers });
+    publicTransactionNetwkork: function(amount, fee, key_from, key_to, private_key, signature) {
+        return axios.post(`${burl}/user/publicTransactionNetwkork`, {amount, fee, key_from, key_to, private_key, signature}, { headers: headers });
     },
 
     joinNetwork: function(id_user) {
@@ -39,16 +39,52 @@ export default {
         return axios.post(`${burl}/user/getTabNetwork`, { headers: headers });
     },
 
-    getAllTransactionNetwork: function() {
-        return axios.post(`${burl}/user/getAllTransactionNetwork`, { headers: headers });
+    getBlockToInsertion: function(id_user) {
+        return axios.post(`${burl}/user/getBlockToInsertion`, {id_user}, { headers: headers });
+    },
+
+    getUserBlockchain: function(id_user) {
+        return axios.post(`${burl}/user/getUserBlockchain`, {id_user}, { headers: headers });
+    },
+
+    sendToBlockChain: function(id_block, id_user) {
+        return axios.post(`${burl}/user/sendToBlockChain`, {id_block, id_user}, { headers: headers });
+    },
+
+    getAllTransactionNetwork: function(id_user) {
+        return axios.post(`${burl}/user/getAllTransactionNetwork`, {id_user}, { headers: headers });
     },
 
     sendMempool: function(id) {
         return axios.post(`${burl}/user/sendMempool`, {id}, { headers: headers });
     },
 
-    getAllTransactionMempool: function() {
-        return axios.post(`${burl}/user/getAllTransactionMempool`, { headers: headers });
+    getAllTransactionMempool: function(id_user) {
+        return axios.post(`${burl}/user/getAllTransactionMempool`, {id_user}, { headers: headers });
+    },
+
+    insertTransactionBlockMine: function(id_user, id_transaction) {
+        return axios.post(`${burl}/user/insertTransactionBlockMine`, {id_user, id_transaction}, { headers: headers });
+    },
+
+    getBlockMiner: function(id_user) {
+        return axios.post(`${burl}/user/getBlockMiner`, {id_user}, { headers: headers });
+    },
+
+    resetBlock: function(id_user, id_block) {
+        return axios.post(`${burl}/user/resetBlock`, {id_user, id_block}, { headers: headers });
+    },
+
+    insertPreviousHash: function(id_user, block_nbr, id_block) {
+        return axios.post(`${burl}/user/insertPreviousHash`, {id_user, block_nbr, id_block}, { headers: headers });
+    },
+
+    Mine: function(id_user, id_block) {
+        return axios.post(`${burl}/user/Mine`, {id_user, id_block}, { headers: headers });
+    },
+
+    sendBlock: function(id_user, id_block) {
+        return axios.post(`${burl}/user/sendBlock`, {id_user, id_block}, { headers: headers });
     },
 
     addEconomy: function(public_key, good, price) {

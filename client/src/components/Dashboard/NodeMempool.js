@@ -12,13 +12,16 @@ class NodeMempool extends Component {
     this.getAllTransactionMempool();
   }
 
-  insertBlock = (event) => {
+  insertTransactionBlockMine = async (event) => {
      console.log("insertBlock");
-   //   API.insertBlock(id);
+     const target = event.target;
+      console.log(target.id);
+     API.insertTransactionBlockMine(localStorage.getItem("id_user"), target.id);
+     this.getAllTransactionMempool();
   }
 
   getAllTransactionMempool = async () => {
-   const {data} = await API.getAllTransactionMempool();
+   const {data} = await API.getAllTransactionMempool(localStorage.getItem("id_user"));
    console.log("getAllTransactionMempool");
    var temp = [];
    var i = 1;
@@ -34,7 +37,7 @@ class NodeMempool extends Component {
       <td className="fixedCellSmaller">{data.results[item].public_key_to}</td>
       <td className="fixedCellSmaller">{data.results[item].private_key}</td>
       <td>
-         <button className="btn btn-blue" data-remote="true" rel="nofollow" onClick={this.insertBlock}>INSERT TRANSACTION INTO NEW BLOCK TO BE MINED</button>
+         <button id={data.results[item].id} className="btn btn-blue" data-remote="true" rel="nofollow" onClick={this.insertTransactionBlockMine}>INSERT TRANSACTION INTO NEW BLOCK TO BE MINED</button>
       </td>
       </tr>);
          i++;
