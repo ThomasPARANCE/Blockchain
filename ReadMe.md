@@ -24,3 +24,6 @@ npm install css-loader -D
 
 si problem genre not space for device
 docker system prune
+
+Pour lancer faire
+docker-compose up --build
