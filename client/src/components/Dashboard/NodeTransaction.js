@@ -15,16 +15,23 @@ class NodeTransaction extends Component {
 
   }
 
-  checkBalance = (event) => {
+  checkBalance = async (event) => {
       const target = event.target;
-      target.className = "btn btn-success";
       var key = Number(target.name) - 1;
+      var id = this.state.listState[key].id;
+      const {data} = await API.checkBalance(id);
       var list = this.state.listState;
-      list[key].isBalance = true;
+      if (data.results === true) {
+         target.className = "btn btn-success"; 
+         list[key].isBalance = true;
+      } else {
+         target.className = "btn btn-danger";  
+         list[key].isBalance = false;
+      }
       this.setState({listState: list});
       if (this.state.listState[key].isBalance && this.state.listState[key].isSignature) {
          console.log("OK");
-         // document.getElementById(target.name).removeAttribute('disabled');
+            document.getElementById(target.name).removeAttribute('disabled');
       }
   }
 
@@ -37,7 +44,7 @@ class NodeTransaction extends Component {
       this.setState({listState: list});
       if (this.state.listState[key].isBalance && this.state.listState[key].isSignature) {
          console.log("OK");
-         // document.getElementById(target.name).removeAttribute('disabled');
+            document.getElementById(target.name).removeAttribute('disabled');
       }
    }
 
@@ -76,7 +83,7 @@ class NodeTransaction extends Component {
                   <button className="btn btn-blue" name={i} data-remote="true" onClick={this.checkSignature} >CHECK SIGNATURE</button>
                </td>
                <td>
-                  <button id={i} name={i} className="btn btn-blue" data-remote="true" onClick={this.sendMempoolTransac}>SEND TO MEMPOOL</button>
+                  <button id={i} name={i} className="btn btn-blue" data-remote="true" disabled="disable" onClick={this.sendMempoolTransac}>SEND TO MEMPOOL</button>
                </td>
                </tr>);
             i++;

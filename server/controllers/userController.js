@@ -13,4 +13,5 @@ module.exports = function (app) {
     app.post('/getAllTransactionMempool', account.getAllTransactionMempool);
     app.post('/addEconomy', account.addEconomy);
     app.post('/getAllEconomy', account.getAllEconomy);
+    app.post('/checkBalance', account.checkBalance);
 }

@@ -273,6 +273,29 @@ async function getAllEconomy(req, res) {
         return res.status(500).send("Error");
     });
 }
+
+async function checkBalance(req, res) {
+    const {id} = req.body;
+    service.checkBalance(id, function(result) {
+        if (result == false) {
+            console.log("not stored");
+            return res.status(500).send("Error");
+        } else {
+            if (result[0].amount <= result[0].balance) {
+                return res.status(200).json({
+                    results: true,
+                    text: "Requete réussi et assez de balance"
+                });   
+            } else {
+                return res.status(200).json({
+                    results: false,
+                    text: "Requete réussi mais pas assez de balance"
+                });
+            }
+        }
+    });
+
+}
 //On exporte nos deux fonctions
 
 exports.login = login;
@@ -287,3 +310,4 @@ exports.sendMempool = sendMempool;
 exports.getAllTransactionMempool = getAllTransactionMempool;
 exports.addEconomy = addEconomy;
 exports.getAllEconomy = getAllEconomy;
+exports.checkBalance = checkBalance;

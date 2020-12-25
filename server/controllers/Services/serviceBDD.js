@@ -176,6 +176,18 @@ ServiceBDD.prototype = {
                 callback(results);
             }
           });
+    },
+
+    checkBalance : function(id, callback)
+    {
+        console.log("checkBalance");
+        pool.query(`select amount, balance from transaction inner join keyUser on transaction.public_key_from = keyUser.public_key where transaction.id = ${id}`, (err, results) => {
+            if (err) {
+                callback(false);
+            } else {
+                callback(results)
+            }
+        });
     }
 }
 
